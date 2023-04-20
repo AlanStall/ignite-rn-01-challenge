@@ -1,7 +1,8 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 
-import NoTasks from '../../components/NoTasks';
+import NoTasks from "../../components/NoTasks";
+import CardTask from "../../components/CardTask";
 
 import {
   StyleSheet,
@@ -10,10 +11,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
-
-/* import Logo02 from '../../assets/logo.png'; */
-/* import Logo from '../../assets/favicon.png'; */
 
 export default function Home() {
   return (
@@ -42,7 +41,6 @@ export default function Home() {
               />
             </TouchableOpacity>
           </View>
-          
         </View>
 
         <View style={styles.followUpActions}>
@@ -60,9 +58,17 @@ export default function Home() {
           </View>
         </View>
 
-        <NoTasks/>
+        {/* <NoTasks/> */}
 
-      </View>      
+        <ScrollView>
+          <CardTask />
+          <CardTask />
+          <CardTask />
+          <CardTask />
+          <CardTask />
+          <CardTask />
+        </ScrollView>        
+      </View>
     </>
   );
 }
@@ -78,11 +84,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1A1A1A",
+    justifyContent: "flex-start",
   },
   wrapInput: {
-    top: -54,
-    alignItems: "center",
+    top: -27,
+    alignItems: "flex-start",
     justifyContent: "center",
+    height: 52,
     flexDirection: "row",
     paddingLeft: 24,
     paddingRight: 24,
@@ -109,68 +117,72 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 6,
-    bottom: 27,
+    bottom: 52,
   },
   buttonBehind: {
     width: 52,
     height: 52,
-    backgroundColor: "#000",
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 6,
-    top: 25,
+    top: 0,
   },
-  followUpActions: {    
-    flexDirection: 'row',
-    top: -48,
-    justifyContent: 'space-between',
+  followUpActions: {
+    flexDirection: "row",
+    height: 19,
+    top: 12,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     paddingLeft: 24,
     paddingRight: 24,
+    marginBottom: 10,
   },
   wrapCreatedTasks: {
-    flexDirection: 'row',
+    flexDirection: "row",
+    justifyContent: "flex-start",
   },
   createdTasksTexts: {
-    color: '#4EA8DE',
-    paddingRight: 8,    
+    color: "#4EA8DE",
+    paddingRight: 8,
     fontSize: 14,
-    fontWeight: '800',
-    justifyContent: 'center',
+    fontWeight: "800",
+    justifyContent: "center",
   },
   wrapNumberTasksCreated: {
-    backgroundColor: '#333333',
+    backgroundColor: "#333333",
     width: 25,
     height: 19,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   numberTasksCreated: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: "800",
   },
   wrapCompletedTasks: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   completedTasksTexts: {
-    color: '#8284FA',
-    paddingRight: 8,    
+    color: "#8284FA",
+    paddingRight: 8,
     fontSize: 14,
-    fontWeight: '800',
-    justifyContent: 'center',
+    fontWeight: "800",
+    justifyContent: "center",
   },
   wrapNumberTasksCompleted: {
-    backgroundColor: '#333333',
+    backgroundColor: "#333333",
     width: 25,
     height: 19,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   numberTasksCompleted: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 });
