@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 
 import NoTasks from "../../components/NoTasks";
@@ -11,10 +11,37 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
+  Alert,
 } from "react-native";
 
 export default function Home() {
+  const [tarefa, setTarefa] = useState("");
+  const [todasTarefas, setTodasTarefas] = useState([""]);
+
+  const amountTodasTarefas = todasTarefas.length;
+
+  function addTask() {
+    setTodasTarefas((prevState) => [...prevState, tarefa]);
+    setTarefa("");
+  }
+
+  function deleteTask(task: string) {
+    Alert.alert("Apagar", "Apagar esta tarefa?", [
+      {
+        text: "Sim",
+        onPress: () =>
+          setTodasTarefas((prevState) =>
+            prevState.filter((todasTarefas) => todasTarefas !== task)
+          ),
+      },
+      {
+        text: "Não",
+        style: "cancel",
+      },
+    ]);
+  }
+
   return (
     <>
       <View style={styles.headerLogo}>
@@ -30,11 +57,13 @@ export default function Home() {
             placeholder="Adicione uma nova tarefa"
             placeholderTextColor="#808080"
             style={styles.input}
+            onChangeText={setTarefa}
+            value={tarefa}
           />
 
           <View>
             <TouchableOpacity style={styles.buttonBehind}></TouchableOpacity>
-            <TouchableOpacity style={styles.buttonAdd}>
+            <TouchableOpacity style={styles.buttonAdd} onPress={addTask}>
               <Image
                 source={require("../../assets/plus.png")}
                 style={{ width: 16, height: 16 }}
@@ -47,7 +76,9 @@ export default function Home() {
           <View style={styles.wrapCreatedTasks}>
             <Text style={styles.createdTasksTexts}>{"Criadas"}</Text>
             <View style={styles.wrapNumberTasksCreated}>
-              <Text style={styles.numberTasksCreated}>{0}</Text>
+              <Text style={styles.numberTasksCreated}>
+                {amountTodasTarefas}
+              </Text>
             </View>
           </View>
           <View style={styles.wrapCompletedTasks}>
@@ -58,16 +89,16 @@ export default function Home() {
           </View>
         </View>
 
-        {/* <NoTasks/> */}
-
-        <ScrollView>
-          <CardTask />
-          <CardTask />
-          <CardTask />
-          <CardTask />
-          <CardTask />
-          <CardTask />
-        </ScrollView>        
+        <FlatList
+          data={todasTarefas}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 30 }}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <CardTask texto={item} onPress={() => deleteTask(item)} />
+          )}
+          ListEmptyComponent={() => <NoTasks />}
+        />
       </View>
     </>
   );
@@ -136,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingLeft: 24,
     paddingRight: 24,
-    marginBottom: 10,
+    marginBottom: 30,
   },
   wrapCreatedTasks: {
     flexDirection: "row",
