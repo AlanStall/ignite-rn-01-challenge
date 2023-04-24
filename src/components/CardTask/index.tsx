@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 type Props = {
   texto: string;
+  isDone: boolean;
   onPress: () => void;
 }
 
-export default function CardTask({texto, onPress}: Props) {
+export default function CardTask({texto, isDone, onPress}: Props) {
   const [check, setCheck] = useState(false);
+  const [concluido, setConcluido] = useState(false);  
+ 
+  /* if (check === true) {
+    isDone = true
+  } else {
+    isDone = false
+  } */
+
+  useEffect(() => {
+    setCheck(isDone);
+  }, [isDone]);
 
   return (
     <View style={styles.wrapTexts}>
@@ -25,11 +37,11 @@ export default function CardTask({texto, onPress}: Props) {
       </TouchableOpacity>
       {!check ? (
         <Text style={styles.textCard}>
-          {texto}
+          {texto /* + isDone */}
         </Text>
       ) : (
         <Text style={styles.textCardChecked}>
-          {texto}
+          {texto /* + isDone */}
         </Text>
       )}
       <TouchableOpacity style={styles.button} onPress={onPress}>

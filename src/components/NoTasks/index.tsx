@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   wrapTexts: {
     alignItems: "center",
     justifyContent: "center",
-    top: -48,
+    top: 0,
     borderTopWidth: 1,
     borderColor: "#808080",
     borderStyle: "solid",

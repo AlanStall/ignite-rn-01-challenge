@@ -15,16 +15,30 @@ import {
   Alert,
 } from "react-native";
 
+type Tasks = {
+  id: string;
+  text: string;
+  isDone: boolean
+}
+
 export default function Home() {
-  const [tarefa, setTarefa] = useState("");
-  const [todasTarefas, setTodasTarefas] = useState([""]);
+  const [tarefa, setTarefa] = useState('');
+  const [todasTarefas, setTodasTarefas] = useState<Tasks[]>([]); 
+  const [feitas, setFeitas] = useState();
 
   const amountTodasTarefas = todasTarefas.length;
+  const tarefasCompletas = todasTarefas.filter(tarefa => tarefa.isDone === true);
+  
 
   function addTask() {
-    setTodasTarefas((prevState) => [...prevState, tarefa]);
-    setTarefa("");
-  }
+    if (tarefa.trim().length > 3) {
+      const newTask = { id: Math.random().toString(), text: tarefa, isDone: false };
+      setTodasTarefas((prevState) => [...prevState, newTask]);
+      setTarefa("");
+    } else {
+      Alert.alert('Quantidade mínima de caracteres não alcançada', 'Favor cadastrar um texto com no mínimo 3 letras.')
+    }
+  } 
 
   function deleteTask(task: string) {
     Alert.alert("Apagar", "Apagar esta tarefa?", [
@@ -32,7 +46,7 @@ export default function Home() {
         text: "Sim",
         onPress: () =>
           setTodasTarefas((prevState) =>
-            prevState.filter((todasTarefas) => todasTarefas !== task)
+            prevState.filter((todasTarefas) => todasTarefas.id !== task)
           ),
       },
       {
@@ -93,9 +107,9 @@ export default function Home() {
           data={todasTarefas}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 30 }}
-          keyExtractor={(item) => item}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <CardTask texto={item} onPress={() => deleteTask(item)} />
+            <CardTask texto={item.text} isDone={item.isDone} onPress={() => deleteTask(item.id)} />
           )}
           ListEmptyComponent={() => <NoTasks />}
         />
