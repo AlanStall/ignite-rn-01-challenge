@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 
+import { styles } from "./styles";
+
 import NoTasks from "../../components/NoTasks";
 import CardTask from "../../components/CardTask";
 
 import {
-  StyleSheet,
   Text,
   View,
   Image,
@@ -18,35 +19,62 @@ import {
 type Tasks = {
   id: string;
   text: string;
-  isDone: boolean
-}
+  isDone: boolean;
+};
 
 export default function Home() {
-  const [tarefa, setTarefa] = useState('');
-  const [todasTarefas, setTodasTarefas] = useState<Tasks[]>([]); 
-  const [feitas, setFeitas] = useState();
+  const [task, setTask] = useState("");
+  const [allTasks, setAllTasks] = useState<Tasks[]>([]);
+  const [isFocusInput, setIsFocusInput] = useState(false);
 
-  const amountTodasTarefas = todasTarefas.length;
-  const tarefasCompletas = todasTarefas.filter(tarefa => tarefa.isDone === true);
-  
+  const amountAllTasks = allTasks.length;
+  const tasksCompleted = allTasks.filter(
+    (task) => task.isDone === true
+  );
+
+  const toFocusInput = () => {
+    setIsFocusInput(true);
+  };
+  const notToFocusInput = () => {
+    setIsFocusInput(false);
+  };
 
   function addTask() {
-    if (tarefa.trim().length > 3) {
-      const newTask = { id: Math.random().toString(), text: tarefa, isDone: false };
-      setTodasTarefas((prevState) => [...prevState, newTask]);
-      setTarefa("");
+    if (task.trim().length > 3) {
+      const newTask = {
+        id: Math.random().toString(),
+        text: task,
+        isDone: false,
+      };
+      setAllTasks((prevState) => [...prevState, newTask]);
+      setTask("");
     } else {
-      Alert.alert('Quantidade mínima de caracteres não alcançada', 'Favor cadastrar um texto com no mínimo 3 letras.')
+      Alert.alert(
+        "Quantidade mínima de caracteres não alcançada",
+        "Favor cadastrar um texto com no mínimo 3 letras."
+      );
     }
-  } 
+  }
 
-  function deleteTask(task: string) {
+  function completeTask(id: string) {
+    setAllTasks((prevState) => {
+      return prevState.map((task) => {
+        if (task.id === id) {
+          return { ...task, isDone: !task.isDone };
+        } else {
+          return { ...task };
+        }
+      });
+    });
+  }
+
+  function deleteTask(id: string) {
     Alert.alert("Apagar", "Apagar esta tarefa?", [
       {
         text: "Sim",
         onPress: () =>
-          setTodasTarefas((prevState) =>
-            prevState.filter((todasTarefas) => todasTarefas.id !== task)
+          setAllTasks((prevState) =>
+            prevState.filter((todasTarefas) => todasTarefas.id !== id)
           ),
       },
       {
@@ -70,9 +98,11 @@ export default function Home() {
           <TextInput
             placeholder="Adicione uma nova tarefa"
             placeholderTextColor="#808080"
-            style={styles.input}
-            onChangeText={setTarefa}
-            value={tarefa}
+            onFocus={toFocusInput}
+            onBlur={notToFocusInput}
+            style={isFocusInput ? styles.inputFocused : styles.input }
+            onChangeText={setTask}
+            value={task}
           />
 
           <View>
@@ -91,25 +121,32 @@ export default function Home() {
             <Text style={styles.createdTasksTexts}>{"Criadas"}</Text>
             <View style={styles.wrapNumberTasksCreated}>
               <Text style={styles.numberTasksCreated}>
-                {amountTodasTarefas}
+                {amountAllTasks}
               </Text>
             </View>
           </View>
           <View style={styles.wrapCompletedTasks}>
             <Text style={styles.completedTasksTexts}>{"Concluídas"}</Text>
             <View style={styles.wrapNumberTasksCompleted}>
-              <Text style={styles.numberTasksCompleted}>{0}</Text>
+              <Text style={styles.numberTasksCompleted}>
+                {tasksCompleted.length}
+              </Text>
             </View>
           </View>
         </View>
 
         <FlatList
-          data={todasTarefas}
+          data={allTasks}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 30 }}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <CardTask texto={item.text} isDone={item.isDone} onPress={() => deleteTask(item.id)} />
+            <CardTask
+              text={item.text}
+              isDone={item.isDone}
+              onPressToComplete={() => completeTask(item.id)}
+              onPressToDelete={() => deleteTask(item.id)}
+            />
           )}
           ListEmptyComponent={() => <NoTasks />}
         />
@@ -117,117 +154,3 @@ export default function Home() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  headerLogo: {
-    backgroundColor: "#0D0D0D",
-    height: 173,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#1A1A1A",
-    justifyContent: "flex-start",
-  },
-  wrapInput: {
-    top: -27,
-    alignItems: "flex-start",
-    justifyContent: "center",
-    height: 52,
-    flexDirection: "row",
-    paddingLeft: 24,
-    paddingRight: 24,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: "#262626",
-    width: "100%",
-    height: 54,
-    borderRadius: 5,
-    color: "#F2F2F2",
-    fontSize: 16,
-    padding: 10,
-    marginBottom: 0,
-    borderWidth: 1,
-    borderColor: "#000",
-    borderStyle: "solid",
-    marginRight: 4,
-  },
-  buttonAdd: {
-    width: 52,
-    height: 52,
-    backgroundColor: "#1E6F9F",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 6,
-    bottom: 52,
-  },
-  buttonBehind: {
-    width: 52,
-    height: 52,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 6,
-    top: 0,
-  },
-  followUpActions: {
-    flexDirection: "row",
-    height: 19,
-    top: 12,
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    paddingLeft: 24,
-    paddingRight: 24,
-    marginBottom: 30,
-  },
-  wrapCreatedTasks: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-  },
-  createdTasksTexts: {
-    color: "#4EA8DE",
-    paddingRight: 8,
-    fontSize: 14,
-    fontWeight: "800",
-    justifyContent: "center",
-  },
-  wrapNumberTasksCreated: {
-    backgroundColor: "#333333",
-    width: 25,
-    height: 19,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  numberTasksCreated: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "800",
-  },
-  wrapCompletedTasks: {
-    flexDirection: "row",
-  },
-  completedTasksTexts: {
-    color: "#8284FA",
-    paddingRight: 8,
-    fontSize: 14,
-    fontWeight: "800",
-    justifyContent: "center",
-  },
-  wrapNumberTasksCompleted: {
-    backgroundColor: "#333333",
-    width: 25,
-    height: 19,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  numberTasksCompleted: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "800",
-  },
-});
